@@ -6,12 +6,15 @@
     "main": "./dist/index.js",
     "repository": "https://gitlab.com/decipher-cs/sock-it-to-me.git",
     "author": "decipher",
-    "license": "MIT",
+    "license": "GNU General Public License v3.0",
     "scripts": {
         "dev": "vite",
-        "build": "tsc && vite build",
         "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "build": "tsc && vite build && tsc -p ./server/tsconfig.json",
+        "serve": "tsc-watch -p ./server/tsconfig.json --onSucess \"node ./server/dist/index.js\"",
+        "build-serve": "tsc -p ./server/tsconfig.json",
+        "preview-serve": "node ./server/dist/index.js"
     },
     "dependencies": {
         "react": "^18.2.0",
