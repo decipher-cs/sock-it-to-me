@@ -41,9 +41,10 @@ io.on('connection', socket => {
     })
 
     socket.on('private message', ({ content, to }: { [key: string]: string }) => {
+        console.log('SERVER-SIDE:: from', socket.id, 'to:', to)
         socket.to(to).emit('private message', {
             content,
-            from: socket.id, // This should not work because from: socket.id would be wrong... i think...
+            from: socket.id,
         })
     })
 })
