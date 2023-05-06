@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "cd ./frontend && vite",
-    "serve": "cd ./server && tsc-watch --onSuccess \"node ./dist/index.js\"",
+    "start":"yarn dev & yarn serve",
+    "dev": "vite ./frontend", 
+    "serve": "tsc-watch -p ./server/tsconfig.json --onSuccess \"node ./server/dist/index.js\"",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
