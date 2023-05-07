@@ -26,14 +26,11 @@ function App() {
         socket.auth = { username: username.current }
         socket.connect()
 
-        console.log('user is -->>', socket.auth.username)
-
         // socket.onAny((event, ...args) => {
         //     console.log('onAny ran:', event, args)
         // })
 
         socket.on('connect', () => {
-            console.log('connection establishd on client-side with id:', socket.id)
             setSocketID(socket.id)
         })
 
@@ -47,15 +44,13 @@ function App() {
             users.current.push(user)
         })
 
-        socket.emit('test', 'hello')
-
         socket.on('private message', ({ content, from }) => {
-            console.log('message from user', from, ':::-->>', content)
+            console.log('Priv Msg:', from, ':::-->>', content)
             setMessage(prev => prev.concat(content))
         })
 
         return () => {
-            socket.disconnect
+            socket.disconnect()
         }
     }, [])
 
@@ -64,10 +59,10 @@ function App() {
             <div>
                 <b>Socket.io</b>
                 <br />
-                id: <b>{socketID}</b>
                 <br />
-                name: <b>{username.current}</b>
+                <b>{username.current}</b>
                 <br />
+                <b>{socketID}</b>
                 <br />
                 <input onChange={e => (outMsg.current = e.target.value)} placeholder='Enter message to sent' />
                 <br />
