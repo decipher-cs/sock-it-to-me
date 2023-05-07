@@ -35,13 +35,9 @@ io.on('connection', socket => {
     console.log('new user', socket.username, 'connected.')
     console.log('users are;', users)
 
-    socket.broadcast.emit('user connected', {
-        userID: socket.id,
-        username: socket.username,
-    })
+    socket.broadcast.emit('user connected', { users })
 
     socket.on('private message', ({ content, to }: { [key: string]: string }) => {
-        console.log('SERVER-SIDE:: from', socket.id, 'to:', to)
         socket.to(to).emit('private message', {
             content,
             from: socket.id,

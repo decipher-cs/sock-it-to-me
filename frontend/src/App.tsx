@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import './App.css'
 import { io } from 'socket.io-client'
+import './App.css'
 
 const socket = io('http://localhost:8080', { autoConnect: false })
 
 interface User {
-    id: string
+    userID: string
     username: string
     self?: boolean
 }
@@ -14,7 +14,7 @@ function App() {
     const randomCharUntrimmed = crypto.randomUUID().toString()
     const randomChar = randomCharUntrimmed.slice(32)
     const username = useRef('vuban_' + randomChar)
-    const users = useRef<User[]>([])
+    const [users, setUsers] = useState<User[]>([])
     const [custValue, setCustValue] = useState('')
     const [socketID, setSocketID] = useState('')
     const [message, setMessage] = useState(['example'])
@@ -32,16 +32,17 @@ function App() {
 
         socket.on('connect', () => {
             setSocketID(socket.id)
+            setUsers(users.filter(usr => usr.userID !== socket.id))
         })
 
         socket.on('users', (users: User[]) => {
             users.forEach(user => {
-                user.self = user.id === socket.id
+                user.self = user.userID === socket.id
             })
         })
 
-        socket.on('user connected', (user: User) => {
-            users.current.push(user)
+        socket.on('user connected', ({ users }: { users: User[] }) => {
+            setUsers(users.filter(usr => usr.userID !== socket.id))
         })
 
         socket.on('private message', ({ content, from }) => {
@@ -57,9 +58,12 @@ function App() {
     return (
         <>
             <div>
+                {users.map((usr, i) => (
+                    <div key={i}>{usr.userID}</div>
+                ))}
+                <br />
                 <b>Socket.io</b>
-                <br />
-                <br />
+                <br /> <br />
                 <b>{username.current}</b>
                 <br />
                 <b>{socketID}</b>
@@ -89,6 +93,8 @@ function App() {
                     </div>
                 ))}
                 ____________
+                <br /> <br /> <br />
+                <button onClick={() => setMessage([])}>clear list</button>
             </div>
         </>
     )

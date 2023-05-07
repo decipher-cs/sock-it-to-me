@@ -3,14 +3,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start":"yarn dev & yarn serve",
-    "dev": "vite ./frontend", 
+    "start": "yarn dev & yarn serve",
+    "dev": "vite ./frontend",
     "serve": "tsc-watch -p ./server/tsconfig.json --onSuccess \"node ./server/dist/index.js\"",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/public-sans": "^4.5.12",
+    "@fontsource/roboto": "^4.5.8",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.12.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "socket.io": "^4.6.1",
