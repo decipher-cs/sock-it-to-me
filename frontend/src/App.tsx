@@ -16,6 +16,9 @@ function App() {
     const username = useRef('vuban_' + randomChar)
     const users = useRef<User[]>([])
     const [custValue, setCustValue] = useState('')
+    const [socketID, setSocketID] = useState('')
+    const [message, setMessage] = useState(['example'])
+    const outMsg = useRef('')
 
     useEffect(() => {
         console.clear()
@@ -31,6 +34,7 @@ function App() {
 
         socket.on('connect', () => {
             console.log('connection establishd on client-side with id:', socket.id)
+            setSocketID(socket.id)
         })
 
         socket.on('users', (users: User[]) => {
@@ -47,6 +51,7 @@ function App() {
 
         socket.on('private message', ({ content, from }) => {
             console.log('message from user', from, ':::-->>', content)
+            setMessage(prev => prev.concat(content))
         })
 
         return () => {
@@ -57,17 +62,38 @@ function App() {
     return (
         <>
             <div>
-                <b>Socket.io test run</b>
+                <b>Socket.io</b>
                 <br />
-                <input value={custValue} onChange={e => setCustValue(e.target.value)} />
+                id: <b>{socketID}</b>
+                <br />
+                name: <b>{username.current}</b>
+                <br />
+                <br />
+                <input onChange={e => (outMsg.current = e.target.value)} placeholder='Enter message to sent' />
+                <br />
+                <br />
+                <input
+                    value={custValue}
+                    onChange={e => setCustValue(e.target.value)}
+                    placeholder='Enter room/ person ID here'
+                />
+                <br />
                 <button
                     type='button'
                     onClick={() => {
-                        socket.emit('private message', { content: 'hellowold', to: custValue })
+                        socket.emit('private message', { content: outMsg.current, to: custValue })
                     }}
                 >
                     emit
                 </button>
+                <br /> <br /> <br />
+                ____________
+                {message.map((msg, i) => (
+                    <div key={i}>
+                        {i}. {msg}
+                    </div>
+                ))}
+                ____________
             </div>
         </>
     )
