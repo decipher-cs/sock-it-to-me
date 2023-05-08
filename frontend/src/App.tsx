@@ -4,16 +4,15 @@ import './App.css'
 
 const socket = io('http://localhost:8080', { autoConnect: false })
 
-interface User {
-    userID: string
-    username: string
+export interface User {
+    userID?: string
+    username?: string
     self?: boolean
 }
 
 function App() {
-    const randomCharUntrimmed = crypto.randomUUID().toString()
-    const randomChar = randomCharUntrimmed.slice(32)
-    const username = useRef('vuban_' + randomChar)
+    const usr = 'vauban_' + crypto.randomUUID().slice(33)
+    const [username, setUsername] = useState(usr)
     const [users, setUsers] = useState<User[]>([])
     const [custValue, setCustValue] = useState('')
     const [socketID, setSocketID] = useState('')
@@ -23,16 +22,23 @@ function App() {
     useEffect(() => {
         console.clear()
 
-        socket.auth = { username: username.current }
+        const sessionID = window.sessionStorage.getItem('sessionID')
+        if (sessionID === null || sessionID === undefined) {
+            socket.auth = { username: username }
+        } else {
+            socket.auth = { sessionID }
+        }
         socket.connect()
-
-        // socket.onAny((event, ...args) => {
-        //     console.log('onAny ran:', event, args)
-        // })
 
         socket.on('connect', () => {
             setSocketID(socket.id)
-            setUsers(users.filter(usr => usr.userID !== socket.id))
+        })
+
+        socket.on('session', ({ userID, sessionID, username: savedUsername }: { [key: string]: string }) => {
+            // socket.userID = userID
+            socket.auth = { sessionID }
+            window.sessionStorage.setItem('sessionID', sessionID)
+            setUsername(savedUsername)
         })
 
         socket.on('users', (users: User[]) => {
@@ -64,7 +70,7 @@ function App() {
                 <br />
                 <b>Socket.io</b>
                 <br /> <br />
-                <b>{username.current}</b>
+                <b>{username}</b>
                 <br />
                 <b>{socketID}</b>
                 <br />

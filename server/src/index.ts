@@ -1,25 +1,46 @@
 import { createServer } from 'http'
 import { Server } from 'socket.io'
+import './utils.js'
+import { addNewUser, findUserWithSessionID, randomID } from './utils.js'
 
 const httpServer = createServer()
 const io = new Server(httpServer, { cors: { origin: 'http://localhost:5173' } })
 
+export interface User {
+    userID?: string
+    username?: string
+    sessionID?: string
+}
+
 declare module 'socket.io' {
     interface Socket {
+        userID?: string
         username?: string
+        sessionID?: string
     }
 }
 
-interface User {
-    userID: string
-    username: string
-}
-
 io.use((socket, next) => {
+    socket.username // Error: property "username" does not exist ...
+    const sessionID: string = socket.handshake.auth.sessionID
+    if (sessionID !== undefined) {
+        // find existing session
+        const session = findUserWithSessionID(sessionID)
+        if (session !== undefined) {
+            socket.userID = session.userID
+            socket.username = session.username
+            socket.sessionID = sessionID
+            return next()
+        }
+    }
+
     const username = socket.handshake.auth.username
     if (username === undefined) return next(new Error('invalid username'))
     socket.username = username
-    next()
+    socket.userID = randomID()
+    socket.sessionID = randomID()
+    addNewUser(username, socket.sessionID)
+    return next()
 })
 
 io.on('connection', socket => {
@@ -33,9 +54,10 @@ io.on('connection', socket => {
     }
 
     console.log('new user', socket.username, 'connected.')
-    console.log('users are;', users)
 
-    socket.broadcast.emit('user connected', { users })
+    socket.emit('session', { userID: socket.userID, sessionID: socket.sessionID, username: socket.username })
+
+    socket.emit('user connected', { users })
 
     socket.on('private message', ({ content, to }: { [key: string]: string }) => {
         socket.to(to).emit('private message', {
