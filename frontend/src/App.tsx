@@ -12,11 +12,13 @@ export interface User {
 
 function App() {
     const usr = 'vauban_' + crypto.randomUUID().slice(33)
+    console.log(usr)
     const [username, setUsername] = useState(usr)
     const [users, setUsers] = useState<User[]>([])
     const [custValue, setCustValue] = useState('')
     const [socketID, setSocketID] = useState('')
     const [message, setMessage] = useState(['example'])
+    const [userID, setUserID] = useState('')
     const outMsg = useRef('')
 
     useEffect(() => {
@@ -36,6 +38,7 @@ function App() {
 
         socket.on('session', ({ userID, sessionID, username: savedUsername }: { [key: string]: string }) => {
             // socket.userID = userID
+            setUserID(userID)
             socket.auth = { sessionID }
             window.sessionStorage.setItem('sessionID', sessionID)
             setUsername(savedUsername)
@@ -65,12 +68,19 @@ function App() {
         <>
             <div>
                 {users.map((usr, i) => (
-                    <div key={i}>{usr.userID}</div>
+                    <>
+                        <div style={{ margin: '20px' }} key={i}>
+                            {usr.userID}
+                        </div>
+                        <br /> <br /> <br />
+                    </>
                 ))}
                 <br />
                 <b>Socket.io</b>
                 <br /> <br />
                 <b>{username}</b>
+                <br />
+                <b>{userID}</b>
                 <br />
                 <b>{socketID}</b>
                 <br />

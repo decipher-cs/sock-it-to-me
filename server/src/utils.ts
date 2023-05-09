@@ -17,8 +17,9 @@ export const writeToSessionID = async () => {
     await fs.writeFile(URL, JSON.stringify(sessionStore))
 }
 
-export const addNewUser = async (username: string, sessionID: string) => {
-    sessionStore.push({ username, sessionID })
+export const addNewUser = async (username: string, sessionID: string, userID: string) => {
+    sessionStore.push({ username, sessionID, userID })
+    console.log(sessionStore)
     writeToSessionID()
 }
 

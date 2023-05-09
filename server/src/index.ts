@@ -7,14 +7,14 @@ const httpServer = createServer()
 const io = new Server(httpServer, { cors: { origin: 'http://localhost:5173' } })
 
 export interface User {
-    userID?: string
+    userID: string
     username?: string
     sessionID?: string
 }
 
 declare module 'socket.io' {
     interface Socket {
-        userID?: string
+        userID: string
         username?: string
         sessionID?: string
     }
@@ -39,7 +39,7 @@ io.use((socket, next) => {
     socket.username = username
     socket.userID = randomID()
     socket.sessionID = randomID()
-    addNewUser(username, socket.sessionID)
+    addNewUser(username, socket.sessionID, socket.userID)
     return next()
 })
 
@@ -54,6 +54,8 @@ io.on('connection', socket => {
     }
 
     console.log('new user', socket.username, 'connected.')
+
+    socket.join(socket.userID)
 
     socket.emit('session', { userID: socket.userID, sessionID: socket.sessionID, username: socket.username })
 

@@ -1,1 +1,12 @@
-[{"username":"voban_hell","sessionID":"abc"},{"username":"vuban_6ba9","sessionID":"888771df-b54c-47b0-9303-9c50e53ea6de"},{"username":"vuban_6ba9","sessionID":"b342c857-8910-4d34-8504-c07f9734245f"},{"username":"","sessionID":"9d1402d6-cf97-42ef-83cf-9bf76f3c0c6f"},{"username":"vauban_d33","sessionID":"8a1c79e8-b4fe-4f98-b147-4e0391010636"},{"username":"vauban_cb3","sessionID":"f40fed98-c462-44cd-9341-9ee1a8d2ed7b"},{"username":"vauban_bc1","sessionID":"952feb25-5c4c-42f4-b401-682deaa6833b"},{"username":"vauban_cac","sessionID":"883aebb3-9b82-4ba3-8f74-d75deb38acb6"}]
+[
+  {
+    "username": "vauban_c43",
+    "sessionID": "b7842cd4-2abb-4018-ab44-a894c2208d0a",
+    "userID": "2fb50b8a-d60d-4512-8f48-d98803f207a3"
+  },
+  {
+    "username": "vauban_075",
+    "sessionID": "077777a8-27cc-4455-b8d3-404891691d94",
+    "userID": "26687532-13fe-4faf-9530-df37962ac211"
+  }
+]
