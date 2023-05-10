@@ -1,7 +1,7 @@
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import './utils.js'
-import { addNewUser, findUserWithSessionID, randomID } from './utils.js'
+import { addNewMessage, addNewUser, findMessageForUserID, findUserWithSessionID, randomID } from './utils.js'
 
 const httpServer = createServer()
 const io = new Server(httpServer, { cors: { origin: 'http://localhost:5173' } })
@@ -61,11 +61,19 @@ io.on('connection', socket => {
 
     socket.emit('user connected', { users })
 
+   findMessageForUserID(socket.userID).forEach(msg=>{
+        socket.to(socket.userID).emit('private message', {
+            content: msg.content,
+            from: msg.userID
+        })
+    }) 
+
     socket.on('private message', ({ content, to }: { [key: string]: string }) => {
-        socket.to(to).emit('private message', {
+        socket.to(to).to(socket.userID).emit('private message', {
             content,
             from: socket.id,
         })
+        addNewMessage(socket.userID, content, to)
     })
 })
 

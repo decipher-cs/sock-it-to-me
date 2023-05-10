@@ -1,8 +1,16 @@
 import fs from 'fs/promises'
 import { User } from './index.js'
 
-const URL = './server/sessionStore.json'
-const sessionStore: User[] = await fs.readFile(URL, { encoding: 'utf8' }).then(utfData => JSON.parse(utfData))
+interface Message {
+    userID: string
+    content: string
+    to: string
+}
+
+const SESSION = './server/sessionStore.json'
+const MESSAGE = './server/messageStore.json'
+const sessionStore: User[] = await fs.readFile(SESSION, { encoding: 'utf8' }).then(utfData => JSON.parse(utfData))
+const messageStore: Message[] = await fs.readFile(MESSAGE, { encoding: 'utf8' }).then(utfData => JSON.parse(utfData))
 
 // console.log('json data:', sessionStore)
 
@@ -13,8 +21,22 @@ export const findUserWithSessionID = (sessionID: string) => {
     return user
 }
 
+export const findMessageWithUserID = (userID: string) => {
+    const message = messageStore.find(data => data.userID === userID)
+    return message
+}
+
+export const findMessageForUserID = (userID: string) => {
+    const messages = messageStore.filter(data => data.to === userID)
+    return messages
+}
+
 export const writeToSessionID = async () => {
-    await fs.writeFile(URL, JSON.stringify(sessionStore))
+    await fs.writeFile(SESSION, JSON.stringify(sessionStore))
+}
+
+export const writeToMessage = async () => {
+    await fs.writeFile(MESSAGE, JSON.stringify(messageStore))
 }
 
 export const addNewUser = async (username: string, sessionID: string, userID: string) => {
@@ -23,4 +45,7 @@ export const addNewUser = async (username: string, sessionID: string, userID: st
     writeToSessionID()
 }
 
-// await fs.writeFile(URL)
+export const addNewMessage = async (userID: string, content: string, to: string) => {
+    messageStore.push({ userID, content, to })
+    writeToMessage()
+}
